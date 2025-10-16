@@ -14,7 +14,6 @@ async fn main() -> Result<()> {
     let listening_to = ListeningTo::new(&config);
 
     loop {
-        // Parse cron schedule for next run
         let interval =
             parse_cron_interval(&config.cron_schedule).context("Failed to parse cron schedule")?;
 
