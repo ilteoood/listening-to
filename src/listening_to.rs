@@ -39,8 +39,11 @@ impl ListeningTo {
         Ok(())
     }
 
-    async fn handle_playing_song(&self, current_playing_song: CurrentPlayingSong) -> Result<()> {
-        let slack_profile = self.slack.get_actual_status().await?;
+    async fn handle_playing_song(
+        &self,
+        current_playing_song: CurrentPlayingSong,
+        slack_profile: SlackProfile,
+    ) -> Result<()> {
         let slack_presence = self.slack.get_online_status().await?;
 
         match slack_presence.is_working() {
@@ -54,9 +57,14 @@ impl ListeningTo {
 
     pub async fn run_check(&self) -> Result<()> {
         let current_playing_song = self.spotify.get_current_playing_song().await?;
+        let slack_profile = self.slack.get_actual_status().await?;
 
-        if current_playing_song.is_playing {
-            self.handle_playing_song(current_playing_song).await?;
+        match current_playing_song.is_playing {
+            true => {
+                self.handle_playing_song(current_playing_song, slack_profile)
+                    .await?
+            }
+            false => self.handle_not_working(slack_profile).await?,
         }
 
         Ok(())
