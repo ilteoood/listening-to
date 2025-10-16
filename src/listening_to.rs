@@ -24,7 +24,7 @@ impl ListeningTo {
         current_playing_song: CurrentPlayingSong,
         slack_profile: SlackProfile,
     ) -> Result<()> {
-        if current_playing_song.format() == slack_profile.profile.status_text {
+        if current_playing_song.format() != slack_profile.profile.status_text {
             self.slack
                 .set_listening_to(&current_playing_song.format())
                 .await?;
