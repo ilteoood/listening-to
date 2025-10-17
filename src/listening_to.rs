@@ -1,9 +1,10 @@
 use anyhow::Result;
+use rspotify::model::CurrentlyPlayingContext;
 
 use crate::{
     config::Config,
     slack::{Slack, SlackProfile},
-    spotify::{CurrentPlayingSong, Spotify},
+    spotify::Spotify,
 };
 
 pub struct ListeningTo {
@@ -12,22 +13,23 @@ pub struct ListeningTo {
 }
 
 impl ListeningTo {
-    pub fn new(config: &Config) -> Self {
-        ListeningTo {
+    pub async fn new(config: &Config) -> Result<Self> {
+        Ok(ListeningTo {
             slack: Slack::new(config),
-            spotify: Spotify::new(config),
-        }
+            spotify: Spotify::new(config).await?,
+        })
     }
 
     async fn handle_is_working(
         &self,
-        current_playing_song: CurrentPlayingSong,
+        currently_playing_song: CurrentlyPlayingContext,
         slack_profile: SlackProfile,
     ) -> Result<()> {
-        if current_playing_song.format() != slack_profile.profile.status_text {
-            self.slack
-                .set_listening_to(&current_playing_song.format())
-                .await?;
+        let formatted_song = self
+            .spotify
+            .format_currently_playing(&currently_playing_song);
+        if formatted_song != slack_profile.profile.status_text {
+            self.slack.set_listening_to(&formatted_song).await?;
         }
         Ok(())
     }
@@ -41,14 +43,14 @@ impl ListeningTo {
 
     async fn handle_playing_song(
         &self,
-        current_playing_song: CurrentPlayingSong,
+        currently_playing_song: CurrentlyPlayingContext,
         slack_profile: SlackProfile,
     ) -> Result<()> {
         let slack_presence = self.slack.get_online_status().await?;
 
         match slack_presence.is_working() {
             true => {
-                self.handle_is_working(current_playing_song, slack_profile)
+                self.handle_is_working(currently_playing_song, slack_profile)
                     .await
             }
             false => self.handle_not_working(slack_profile).await,
@@ -56,12 +58,12 @@ impl ListeningTo {
     }
 
     pub async fn run_check(&self) -> Result<()> {
-        let current_playing_song = self.spotify.get_current_playing_song().await?;
+        let currently_playing_song = self.spotify.get_currently_playing_song().await?;
         let slack_profile = self.slack.get_actual_status().await?;
 
-        match current_playing_song.is_playing {
+        match currently_playing_song.is_playing {
             true => {
-                self.handle_playing_song(current_playing_song, slack_profile)
+                self.handle_playing_song(currently_playing_song, slack_profile)
                     .await?
             }
             false => self.handle_not_working(slack_profile).await?,

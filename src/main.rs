@@ -11,7 +11,7 @@ use tokio::time::sleep;
 #[tokio::main]
 async fn main() -> Result<()> {
     let config = Config::from_env().expect("Failed to load configuration");
-    let listening_to = ListeningTo::new(&config);
+    let listening_to = ListeningTo::new(&config).await?;
 
     loop {
         let interval =

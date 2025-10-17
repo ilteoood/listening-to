@@ -4,7 +4,8 @@ use std::env;
 /// Application configuration loaded from environment variables
 #[derive(Debug, Clone)]
 pub struct Config {
-    pub spotify_token: String,
+    pub spotify_client_id: String,
+    pub spotify_client_secret: String,
     pub slack_base_url: String,
     pub slack_token: String,
     pub slack_cookie: String,
@@ -15,7 +16,10 @@ impl Config {
     /// Load configuration from environment variables
     pub fn from_env() -> Result<Self> {
         Ok(Config {
-            spotify_token: env::var("SPOTIFY_TOKEN").context("SPOTIFY_TOKEN not set")?,
+            spotify_client_id: env::var("SPOTIFY_CLIENT_ID")
+                .context("SPOTIFY_CLIENT_ID not set")?,
+            spotify_client_secret: env::var("SPOTIFY_CLIENT_SECRET")
+                .context("SPOTIFY_CLIENT_SECRET not set")?,
             slack_base_url: env::var("SLACK_BASE_URL")
                 .unwrap_or_else(|_| "https://slack.com".to_string()),
             slack_token: env::var("SLACK_TOKEN").context("SLACK_TOKEN not set")?,
