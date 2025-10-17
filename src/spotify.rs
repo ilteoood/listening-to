@@ -1,7 +1,7 @@
 use anyhow::{Context, Result};
 use rspotify::{
     AuthCodeSpotify, Credentials, OAuth,
-    model::{CurrentlyPlayingContext, PlayableItem},
+    model::{AdditionalType, CurrentlyPlayingContext, PlayableItem},
     prelude::OAuthClient,
     scopes,
 };
@@ -16,7 +16,7 @@ impl Spotify {
     pub async fn new(config: &Config) -> Result<Self> {
         let creds = Credentials::new(&config.spotify_client_id, &config.spotify_client_secret);
 
-        let scopes = scopes!("user-read-recently-played");
+        let scopes = scopes!("user-read-currently-playing");
 
         let oauth = OAuth {
             redirect_uri: String::from("http://127.0.0.1:3000"),
@@ -35,7 +35,10 @@ impl Spotify {
     pub async fn get_currently_playing_song(&self) -> Result<CurrentlyPlayingContext> {
         let currently_playing = self
             .client
-            .current_playing(None, Some(vec![]))
+            .current_playing(
+                None,
+                Some(vec![&AdditionalType::Track, &AdditionalType::Episode]),
+            )
             .await
             .context("Failed to retrieve currently playing song")?
             .unwrap();

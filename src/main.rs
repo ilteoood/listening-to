@@ -1,24 +1,39 @@
 mod config;
 mod listening_to;
-mod scheduler;
 mod slack;
 mod spotify;
 
-use crate::{config::Config, listening_to::ListeningTo, scheduler::parse_cron_interval};
-use anyhow::{Context, Result};
-use tokio::time::sleep;
+use std::sync::Arc;
+
+use crate::{config::Config, listening_to::ListeningTo};
+use anyhow::Result;
+use chrono::Local;
+use cron_tab::AsyncCron;
 
 #[tokio::main]
 async fn main() -> Result<()> {
     let config = Config::from_env().expect("Failed to load configuration");
-    let listening_to = ListeningTo::new(&config).await?;
+    let listening_to = Arc::new(ListeningTo::new(&config).await?);
 
-    loop {
-        let interval =
-            parse_cron_interval(&config.cron_schedule).context("Failed to parse cron schedule")?;
+    let local_tz = Local::now().offset().to_owned();
+    let mut cron = AsyncCron::new(local_tz);
 
-        sleep(interval).await;
+    let listening_to = Arc::clone(&listening_to);
+    cron.add_fn(&config.cron_schedule, move || {
+        let listening_to = Arc::clone(&listening_to);
+        async move {
+            match listening_to.run_check().await {
+                Ok(_) => log::info!("Scheduled check completed successfully"),
+                Err(e) => {
+                    log::error!("Error during scheduled check: {:?}", e);
+                    println!("Error during scheduled check: {:?}", e);
+                }
+            }
+        }
+    })
+    .await?;
 
-        listening_to.run_check().await?;
-    }
+    cron.start_blocking().await;
+
+    Ok(())
 }

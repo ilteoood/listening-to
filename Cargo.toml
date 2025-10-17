@@ -5,9 +5,8 @@ edition = "2024"
 
 [dependencies]
 anyhow = "1.0.100"
-async-cron-scheduler = "2.0.1"
 chrono = "0.4.42"
-cron = "0.15.0"
+cron_tab = { version = "0.2.10", features = ["async"] }
 log = "0.4.28"
 openssl = { version = "0.10.74", features = ["vendored"] }
 reqwest = { version = "0.12.24", features = ["json"] }
