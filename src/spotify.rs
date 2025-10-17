@@ -19,7 +19,7 @@ impl Spotify {
         let scopes = scopes!("user-read-currently-playing");
 
         let oauth = OAuth {
-            redirect_uri: String::from("http://127.0.0.1:3000"),
+            redirect_uri: config.spotify_redirect_uri.clone(),
             scopes,
             ..Default::default()
         };
