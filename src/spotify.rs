@@ -1,7 +1,8 @@
 use anyhow::{Context, Result};
+use chrono::DateTime;
 use rspotify::{
     AuthCodeSpotify, Credentials, OAuth,
-    model::{AdditionalType, CurrentlyPlayingContext, PlayableItem},
+    model::{Actions, AdditionalType, CurrentlyPlayingContext, CurrentlyPlayingType, PlayableItem},
     prelude::OAuthClient,
     scopes,
 };
@@ -40,10 +41,20 @@ impl Spotify {
                 Some(vec![&AdditionalType::Track, &AdditionalType::Episode]),
             )
             .await
-            .context("Failed to retrieve currently playing song")?
-            .unwrap();
+            .context("Failed to retrieve currently playing song")?;
 
-        Ok(currently_playing)
+        match currently_playing {
+            Some(context) => Ok(context),
+            None => Ok(CurrentlyPlayingContext {
+                context: None,
+                timestamp: DateTime::default(),
+                progress: None,
+                is_playing: false,
+                item: None,
+                currently_playing_type: CurrentlyPlayingType::Unknown,
+                actions: Actions { disallows: vec![] },
+            }),
+        }
     }
 
     pub fn format_currently_playing(&self, currently_playing: &CurrentlyPlayingContext) -> String {
