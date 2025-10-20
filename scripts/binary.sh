@@ -1,7 +1,5 @@
 #!/bin/ash
 
-ls -lah
-
 case $1 in
 
   amd64)
@@ -17,4 +15,4 @@ case $1 in
     ;;
 esac
 
-mv ./listening-to-${VARIANT} ./listening-to
+mv ./listening-to-${VARIANT}/listening-to ./listening-to
