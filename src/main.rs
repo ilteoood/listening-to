@@ -12,6 +12,7 @@ use cron_tab::AsyncCron;
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    env_logger::init();
     let config = Config::from_env().expect("Failed to load configuration");
     let listening_to = Arc::new(ListeningTo::new(&config).await?);
 
