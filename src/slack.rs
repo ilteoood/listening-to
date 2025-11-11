@@ -97,10 +97,12 @@ impl Slack {
     }
 
     pub async fn set_listening_to(self: &Self, status_text: &str) -> Result<()> {
+        log::info!("Setting Slack status to listening to: {}", status_text);
         self.set_status(status_text, LISTENING_TO_EMOJI).await
     }
 
     pub async fn clear_status(self: &Self) -> Result<()> {
+        log::info!("Clearing Slack status");
         self.set_status("", "").await
     }
 }
