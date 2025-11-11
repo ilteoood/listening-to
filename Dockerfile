@@ -8,6 +8,7 @@ RUN ./scripts/binary.sh $TARGETARCH && \
 FROM scratch
 COPY --from=builder --chmod=755 /builder/listening-to ./listening-to
 COPY --from=builder "/etc_passwd" "/etc/passwd"
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /usr/local/ssl/ca-certificates.crt
 USER nobody
 
 ENV RUST_LOG=info
