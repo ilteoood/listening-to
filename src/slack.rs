@@ -117,4 +117,10 @@ impl SlackProfile {
     pub fn is_listening_to(&self) -> bool {
         self.ok && self.profile.status_emoji == LISTENING_TO_EMOJI
     }
+
+    pub fn has_status(&self) -> bool {
+        self.ok
+            && self.profile.status_emoji != ""
+            && self.profile.status_emoji != LISTENING_TO_EMOJI
+    }
 }

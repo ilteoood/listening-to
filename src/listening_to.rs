@@ -28,7 +28,7 @@ impl ListeningTo {
         let formatted_song = self
             .spotify
             .format_currently_playing(&currently_playing_song);
-        if formatted_song != slack_profile.profile.status_text && slack_profile.is_listening_to() {
+        if formatted_song != slack_profile.profile.status_text && !slack_profile.has_status() {
             self.slack.set_listening_to(&formatted_song).await?;
         }
         Ok(())
