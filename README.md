@@ -39,6 +39,7 @@ All configuration is done via environment variables:
 | `SPOTIFY_CLIENT_ID` | Your Spotify app client ID | *Required* |
 | `SPOTIFY_CLIENT_SECRET` | Your Spotify app client secret | *Required* |
 | `SPOTIFY_REDIRECT_URI` | OAuth redirect URI | `http://127.0.0.1:3000` |
+| `SPOTIFY_TOKEN_CACHE_PATH` | Path to cache the Spotify OAuth token | `.spotify_token_cache.json` |
 | `SLACK_TOKEN` | Your Slack authentication token | *Required* |
 | `SLACK_COOKIE` | Your Slack session cookie | *Required* |
 | `SLACK_BASE_URL` | Slack workspace URL | `https://slack.com` |

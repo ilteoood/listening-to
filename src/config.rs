@@ -7,6 +7,7 @@ pub struct Config {
     pub spotify_client_id: String,
     pub spotify_client_secret: String,
     pub spotify_redirect_uri: String,
+    pub spotify_token_cache_path: std::path::PathBuf,
     pub slack_base_url: String,
     pub slack_token: String,
     pub slack_cookie: String,
@@ -23,6 +24,9 @@ impl Config {
                 .context("SPOTIFY_CLIENT_SECRET not set")?,
             spotify_redirect_uri: env::var("SPOTIFY_REDIRECT_URI")
                 .unwrap_or_else(|_| "http://127.0.0.1:3000".to_string()),
+            spotify_token_cache_path: env::var("SPOTIFY_TOKEN_CACHE_PATH")
+                .map(std::path::PathBuf::from)
+                .unwrap_or_else(|_| std::path::PathBuf::from(".spotify_token_cache.json")),
             slack_base_url: env::var("SLACK_BASE_URL")
                 .unwrap_or_else(|_| "https://slack.com".to_string()),
             slack_token: env::var("SLACK_TOKEN").context("SLACK_TOKEN not set")?,

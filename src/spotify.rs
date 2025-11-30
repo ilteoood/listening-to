@@ -25,7 +25,15 @@ impl Spotify {
             ..Default::default()
         };
 
-        let spotify = AuthCodeSpotify::new(creds, oauth);
+        let spotify = AuthCodeSpotify::with_config(
+            creds,
+            oauth,
+            rspotify::Config {
+                token_cached: true,
+                cache_path: config.spotify_token_cache_path.clone(),
+                ..Default::default()
+            },
+        );
 
         let url = spotify.get_authorize_url(false).unwrap();
         spotify.prompt_for_token(&url).await.unwrap();
