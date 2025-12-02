@@ -19,7 +19,6 @@ async fn main() -> Result<()> {
     let local_tz = Local::now().offset().to_owned();
     let mut cron = AsyncCron::new(local_tz);
 
-    let listening_to = Arc::clone(&listening_to);
     cron.add_fn(&config.cron_schedule, move || {
         let listening_to = Arc::clone(&listening_to);
         async move {
