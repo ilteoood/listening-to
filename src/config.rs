@@ -46,11 +46,9 @@ mod tests {
     // Mutex to ensure tests don't run in parallel since they modify env vars
     static ENV_MUTEX: Mutex<()> = Mutex::new(());
 
-    // SAFETY: These functions modify environment variables which is inherently
-    // unsafe in multi-threaded contexts. We use a mutex to ensure single-threaded
-    // access during tests.
-    unsafe fn setup_required_env_vars() {
-        // SAFETY: Called within unsafe context protected by mutex
+    fn setup_required_env_vars() {
+        // SAFETY: Environment variable modification is unsafe in Rust 2024.
+        // This is protected by ENV_MUTEX ensuring single-threaded access.
         unsafe {
             env::set_var("SPOTIFY_CLIENT_ID", "test_client_id");
             env::set_var("SPOTIFY_CLIENT_SECRET", "test_client_secret");
@@ -59,11 +57,9 @@ mod tests {
         }
     }
 
-    // SAFETY: These functions modify environment variables which is inherently
-    // unsafe in multi-threaded contexts. We use a mutex to ensure single-threaded
-    // access during tests.
-    unsafe fn clear_env_vars() {
-        // SAFETY: Called within unsafe context protected by mutex
+    fn clear_env_vars() {
+        // SAFETY: Environment variable modification is unsafe in Rust 2024.
+        // This is protected by ENV_MUTEX ensuring single-threaded access.
         unsafe {
             env::remove_var("SPOTIFY_CLIENT_ID");
             env::remove_var("SPOTIFY_CLIENT_SECRET");
@@ -79,11 +75,8 @@ mod tests {
     #[test]
     fn test_from_env_with_all_required_vars() {
         let _lock = ENV_MUTEX.lock().unwrap();
-        // SAFETY: Protected by mutex, single-threaded access guaranteed
-        unsafe {
-            clear_env_vars();
-            setup_required_env_vars();
-        }
+        clear_env_vars();
+        setup_required_env_vars();
 
         let config = Config::from_env().unwrap();
 
@@ -96,11 +89,8 @@ mod tests {
     #[test]
     fn test_from_env_uses_default_values() {
         let _lock = ENV_MUTEX.lock().unwrap();
-        // SAFETY: Protected by mutex, single-threaded access guaranteed
-        unsafe {
-            clear_env_vars();
-            setup_required_env_vars();
-        }
+        clear_env_vars();
+        setup_required_env_vars();
 
         let config = Config::from_env().unwrap();
 
@@ -116,10 +106,11 @@ mod tests {
     #[test]
     fn test_from_env_with_custom_optional_vars() {
         let _lock = ENV_MUTEX.lock().unwrap();
-        // SAFETY: Protected by mutex, single-threaded access guaranteed
+        clear_env_vars();
+        setup_required_env_vars();
+        // SAFETY: Environment variable modification is unsafe in Rust 2024.
+        // This is protected by ENV_MUTEX ensuring single-threaded access.
         unsafe {
-            clear_env_vars();
-            setup_required_env_vars();
             env::set_var("SPOTIFY_REDIRECT_URI", "http://custom:8080");
             env::set_var("SPOTIFY_TOKEN_CACHE_PATH", "/custom/path/token.json");
             env::set_var("SLACK_BASE_URL", "https://custom.slack.com");
@@ -140,9 +131,10 @@ mod tests {
     #[test]
     fn test_from_env_missing_spotify_client_id() {
         let _lock = ENV_MUTEX.lock().unwrap();
-        // SAFETY: Protected by mutex, single-threaded access guaranteed
+        clear_env_vars();
+        // SAFETY: Environment variable modification is unsafe in Rust 2024.
+        // This is protected by ENV_MUTEX ensuring single-threaded access.
         unsafe {
-            clear_env_vars();
             env::set_var("SPOTIFY_CLIENT_SECRET", "test_secret");
             env::set_var("SLACK_TOKEN", "test_token");
             env::set_var("SLACK_COOKIE", "test_cookie");
@@ -159,9 +151,10 @@ mod tests {
     #[test]
     fn test_from_env_missing_spotify_client_secret() {
         let _lock = ENV_MUTEX.lock().unwrap();
-        // SAFETY: Protected by mutex, single-threaded access guaranteed
+        clear_env_vars();
+        // SAFETY: Environment variable modification is unsafe in Rust 2024.
+        // This is protected by ENV_MUTEX ensuring single-threaded access.
         unsafe {
-            clear_env_vars();
             env::set_var("SPOTIFY_CLIENT_ID", "test_id");
             env::set_var("SLACK_TOKEN", "test_token");
             env::set_var("SLACK_COOKIE", "test_cookie");
@@ -178,9 +171,10 @@ mod tests {
     #[test]
     fn test_from_env_missing_slack_token() {
         let _lock = ENV_MUTEX.lock().unwrap();
-        // SAFETY: Protected by mutex, single-threaded access guaranteed
+        clear_env_vars();
+        // SAFETY: Environment variable modification is unsafe in Rust 2024.
+        // This is protected by ENV_MUTEX ensuring single-threaded access.
         unsafe {
-            clear_env_vars();
             env::set_var("SPOTIFY_CLIENT_ID", "test_id");
             env::set_var("SPOTIFY_CLIENT_SECRET", "test_secret");
             env::set_var("SLACK_COOKIE", "test_cookie");
@@ -197,9 +191,10 @@ mod tests {
     #[test]
     fn test_from_env_missing_slack_cookie() {
         let _lock = ENV_MUTEX.lock().unwrap();
-        // SAFETY: Protected by mutex, single-threaded access guaranteed
+        clear_env_vars();
+        // SAFETY: Environment variable modification is unsafe in Rust 2024.
+        // This is protected by ENV_MUTEX ensuring single-threaded access.
         unsafe {
-            clear_env_vars();
             env::set_var("SPOTIFY_CLIENT_ID", "test_id");
             env::set_var("SPOTIFY_CLIENT_SECRET", "test_secret");
             env::set_var("SLACK_TOKEN", "test_token");
@@ -216,11 +211,8 @@ mod tests {
     #[test]
     fn test_config_clone() {
         let _lock = ENV_MUTEX.lock().unwrap();
-        // SAFETY: Protected by mutex, single-threaded access guaranteed
-        unsafe {
-            clear_env_vars();
-            setup_required_env_vars();
-        }
+        clear_env_vars();
+        setup_required_env_vars();
 
         let config = Config::from_env().unwrap();
         let cloned = config.clone();
@@ -241,11 +233,8 @@ mod tests {
     #[test]
     fn test_config_debug() {
         let _lock = ENV_MUTEX.lock().unwrap();
-        // SAFETY: Protected by mutex, single-threaded access guaranteed
-        unsafe {
-            clear_env_vars();
-            setup_required_env_vars();
-        }
+        clear_env_vars();
+        setup_required_env_vars();
 
         let config = Config::from_env().unwrap();
         let debug_str = format!("{:?}", config);
