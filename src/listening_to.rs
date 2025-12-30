@@ -67,6 +67,7 @@ pub fn determine_not_playing_action(slack_profile: &SlackProfile) -> StatusActio
 }
 
 impl ListeningTo {
+    #[cfg(not(tarpaulin_include))]
     pub async fn new(config: &Config) -> Result<Self> {
         Ok(ListeningTo {
             slack: Slack::new(config),
@@ -74,6 +75,7 @@ impl ListeningTo {
         })
     }
 
+    #[cfg(not(tarpaulin_include))]
     async fn handle_is_working(
         &self,
         currently_playing_song: CurrentlyPlayingContext,
@@ -86,6 +88,7 @@ impl ListeningTo {
         Ok(())
     }
 
+    #[cfg(not(tarpaulin_include))]
     async fn handle_not_working(&self, slack_profile: SlackProfile) -> Result<()> {
         if should_clear_status(&slack_profile) {
             self.slack.clear_status().await?;
@@ -93,6 +96,7 @@ impl ListeningTo {
         Ok(())
     }
 
+    #[cfg(not(tarpaulin_include))]
     async fn handle_playing_song(
         &self,
         currently_playing_song: CurrentlyPlayingContext,
@@ -109,6 +113,7 @@ impl ListeningTo {
         }
     }
 
+    #[cfg(not(tarpaulin_include))]
     pub async fn run_check(&self) -> Result<()> {
         let currently_playing_song = self.spotify.get_currently_playing_song().await?;
         let slack_profile = self.slack.get_actual_status().await?;

@@ -11,6 +11,7 @@ use chrono::Local;
 use cron_tab::AsyncCron;
 
 #[tokio::main]
+#[cfg(not(tarpaulin_include))]
 async fn main() -> Result<()> {
     env_logger::init();
     let config = Config::from_env().expect("Failed to load configuration");

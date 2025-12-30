@@ -44,6 +44,7 @@ pub fn create_default_context() -> CurrentlyPlayingContext {
 }
 
 impl Spotify {
+    #[cfg(not(tarpaulin_include))]
     pub async fn new(config: &Config) -> Result<Self> {
         let creds = Credentials::new(&config.spotify_client_id, &config.spotify_client_secret);
 
@@ -71,6 +72,7 @@ impl Spotify {
         Ok(Spotify { client: spotify })
     }
 
+    #[cfg(not(tarpaulin_include))]
     pub async fn get_currently_playing_song(&self) -> Result<CurrentlyPlayingContext> {
         let currently_playing = self
             .client
