@@ -10,7 +10,7 @@ cron_tab = { version = "0.2.13", features = ["async"] }
 env_logger = "0.11.10"
 log = "0.4.29"
 openssl = { version = "0.10.77", features = ["vendored"] }
-reqwest = { version = "0.13.2", features = ["json", "rustls"] }
+reqwest = { version = "0.13.2", features = ["json", "native-tls"] }
 rspotify = { version = "0.16.0", features = ["cli"] }
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.149"
