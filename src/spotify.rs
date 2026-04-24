@@ -101,9 +101,7 @@ mod tests {
         FullTrack {
             album: rspotify::model::SimplifiedAlbum {
                 album_type: None,
-                album_group: None,
                 artists: vec![],
-                available_markets: vec![],
                 external_urls: HashMap::new(),
                 href: None,
                 id: Some(AlbumId::from_id("album123").unwrap()),
@@ -114,7 +112,6 @@ mod tests {
                 restrictions: None,
             },
             artists,
-            available_markets: vec![],
             disc_number: 1,
             duration: chrono::TimeDelta::seconds(180),
             explicit: false,
@@ -124,10 +121,8 @@ mod tests {
             id: Some(TrackId::from_id("track123").unwrap()),
             is_local: false,
             is_playable: Some(true),
-            linked_from: None,
             restrictions: None,
             name: name.to_string(),
-            popularity: 50,
             preview_url: None,
             track_number: 1,
             r#type: Type::Track,
