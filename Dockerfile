@@ -11,6 +11,7 @@ COPY --from=builder "/etc_passwd" "/etc/passwd"
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /usr/local/ssl/ca-certificates.crt
 USER nobody
 
+ENV SSL_CERT_FILE=/usr/local/ssl/ca-certificates.crt
 ENV RUST_LOG=info
 ENV SPOTIFY_CLIENT_ID=your-client-id
 ENV SPOTIFY_CLIENT_SECRET=your-client-secret
