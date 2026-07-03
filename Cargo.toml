@@ -5,7 +5,7 @@ edition = "2024"
 
 [dependencies]
 anyhow = "1.0.102"
-chrono = "0.4.44"
+chrono = "0.4.45"
 cron_tab = { version = "0.2.13", features = ["async"] }
 env_logger = "0.11.10"
 log = "0.4.30"
