@@ -67,7 +67,7 @@ impl Slack {
     pub async fn get_online_status(self: &Self) -> Result<SlackPresence> {
         let res = self
             .client
-            .get("https://slack.com/api/users.getPresence")
+            .get(format!("{}/api/users.getPresence", self.base_url))
             .send()
             .await
             .context("Failed to retrieve Slack presence")?;
@@ -87,7 +87,7 @@ impl Slack {
         });
 
         self.client
-            .post("https://slack.com/api/users.profile.set")
+            .post(format!("{}/api/users.profile.set", self.base_url))
             .json(&payload)
             .send()
             .await
@@ -189,7 +189,8 @@ mod tests {
 
     #[test]
     fn test_is_listening_to_with_different_emoji() {
-        let json = r#"{"ok": true, "profile": {"status_text": "Status", "status_emoji": ":coffee:"}}"#;
+        let json =
+            r#"{"ok": true, "profile": {"status_text": "Status", "status_emoji": ":coffee:"}}"#;
         let profile: SlackProfile = serde_json::from_str(json).unwrap();
         assert!(!profile.is_listening_to());
     }
@@ -239,11 +240,24 @@ mod tests {
 
     #[test]
     fn test_has_status_with_various_emojis() {
-        let emojis = [":coffee:", ":palm_tree:", ":house:", ":computer:", ":phone:"];
+        let emojis = [
+            ":coffee:",
+            ":palm_tree:",
+            ":house:",
+            ":computer:",
+            ":phone:",
+        ];
         for emoji in emojis {
-            let json = format!(r#"{{"ok": true, "profile": {{"status_text": "Status text", "status_emoji": "{}"}}}}"#, emoji);
+            let json = format!(
+                r#"{{"ok": true, "profile": {{"status_text": "Status text", "status_emoji": "{}"}}}}"#,
+                emoji
+            );
             let profile: SlackProfile = serde_json::from_str(&json).unwrap();
-            assert!(profile.has_status(), "Expected has_status to be true for emoji: {}", emoji);
+            assert!(
+                profile.has_status(),
+                "Expected has_status to be true for emoji: {}",
+                emoji
+            );
         }
     }
 
